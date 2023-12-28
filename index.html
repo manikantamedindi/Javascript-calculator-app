@@ -3,13 +3,157 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Javascript Calculator</title>
-    <link rel="stylesheet" href="/app.css">
+    <title>Simple Calculator</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+      }
+
+      #calculator {
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      #display {
+        padding: 10px;
+        text-align: right;
+        font-size: 1.5em;
+        border-bottom: 1px solid #ccc;
+      }
+
+      #buttons {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      button {
+        padding: 15px;
+        font-size: 1em;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      button:hover {
+        background-color: #eee;
+      }
+
+      button.operator {
+        background-color: #fda300;
+        color: #fff;
+      }
+    </style>
   </head>
   <body>
+    <div id="calculator">
+      <div id="display">0</div>
+      <div id="buttons">
+        <button>7</button>
+        <button>8</button>
+        <button>9</button>
+        <button class="operator">/</button>
+        <button>4</button>
+        <button>5</button>
+        <button>6</button>
+        <button class="operator">*</button>
+        <button>1</button>
+        <button>2</button>
+        <button>3</button>
+        <button class="operator">-</button>
+        <button>0</button>
+        <button>.</button>
+        <button class="operator">=</button>
+        <button class="operator">+</button>
+      </div>
+    </div>
 
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const display = document.getElementById('display');
+        const buttons = document.getElementById('buttons');
 
-    <!-- External script files -->
-    <script src="/app.js"></script>
+        let currentInput = '';
+        let operator = '';
+        let firstOperand = null;
+
+        buttons.addEventListener('click', function (event) {
+          const button = event.target;
+          const buttonText = button.textContent;
+
+          if (!isNaN(buttonText) || buttonText === '.') {
+            currentInput += buttonText;
+          } else if (buttonText === 'C') {
+            resetCalculator();
+          } else if (buttonText === '=') {
+            performCalculation();
+          } else {
+            handleOperator(buttonText);
+          }
+
+          updateDisplay();
+        });
+
+        function updateDisplay() {
+          display.textContent = currentInput || '0';
+        }
+
+        function resetCalculator() {
+          currentInput = '';
+          operator = '';
+          firstOperand = null;
+        }
+
+        function handleOperator(newOperator) {
+          if (currentInput !== '') {
+            if (firstOperand === null) {
+              firstOperand = parseFloat(currentInput);
+            } else {
+              performCalculation();
+            }
+
+            operator = newOperator;
+            currentInput = '';
+          }
+        }
+
+        function performCalculation() {
+          if (operator !== '' && currentInput !== '') {
+            const secondOperand = parseFloat(currentInput);
+            switch (operator) {
+              case '+':
+                currentInput = (firstOperand + secondOperand).toString();
+                break;
+              case '-':
+                currentInput = (firstOperand - secondOperand).toString();
+                break;
+              case '*':
+                currentInput = (firstOperand * secondOperand).toString();
+                break;
+              case '/':
+                if (secondOperand !== 0) {
+                  currentInput = (firstOperand / secondOperand).toString();
+                } else {
+                  currentInput = 'Error';
+                }
+                break;
+              default:
+                break;
+            }
+
+            operator = '';
+            firstOperand = null;
+          }
+        }
+      });
+    </script>
   </body>
 </html>
